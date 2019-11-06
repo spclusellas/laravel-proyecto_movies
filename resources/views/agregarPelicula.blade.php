@@ -7,7 +7,7 @@
       <li>{{ $error }}</li>
     @endforeach
   </ul>
-  <form action="/agregarPelicula" id="agregarPelicula" name="agregarPelicula" method="POST">
+  <form action="/agregarPelicula" id="agregarPelicula" name="agregarPelicula" method="POST" enctype="multipart/form-data">
     {{csrf_field()}}
       <div>
           <label for="titulo">Titulo</label>
@@ -28,6 +28,10 @@
       <div>
           <label>Fecha de Estreno</label>
           <input type="date" name="dia" value="{{old('dia')}}">
+      </div>
+      <div class="">
+          <label for="">Poster:</label>
+          <input type="file" name="poster" value="">
       </div>
       <input type="submit" value="Agregar Pelicula" name="submit"/>
   </form>

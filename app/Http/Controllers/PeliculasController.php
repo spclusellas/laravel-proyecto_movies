@@ -10,26 +10,11 @@ use App\Pelicula;
 
 class PeliculasController extends Controller
 {
-    public function buscarPeliculasId($id){
-
-        $peliculas = [
-            1 => "Toy Story",
-            2 => "Buscando a Nemo",
-            3 => "Avatar",
-            4 => "Star Wars: Episodio V",
-            5 => "Up",
-            6 => "Mary and Max"
-        ];
-
-        $tituloFinal = $peliculas[$id];
-
-        $vac = compact('tituloFinal');
-
-        return view('peliculaId', $vac);
-    }
 
     public function listado(){
       $peliculas = Pelicula::all();
+
+      $peliculas = $peliculas->sortBy('title');
 
       $vac = compact('peliculas');
 
@@ -39,9 +24,18 @@ class PeliculasController extends Controller
     public function detalle($id){
       $pelicula = Pelicula::find($id);
 
-      $vac = compact('pelicula');
+      $actoresBuenos = $pelicula->actores->filter(function ($value){
+        return $value->rating > 7;
+      });
 
-      return view('detallePelicula', $vac);
+      // echo "<pre>";
+      // var_dump($actoresBuenos);
+      // echo "</pre>";
+      // exit;
+
+      // $vac = compact('pelicula', 'actoresBuenos');
+
+      return view('peliculaId', compact('pelicula', 'actoresBuenos'));
     }
 
     public function lasMejores(){
@@ -64,6 +58,7 @@ class PeliculasController extends Controller
         'premios' => 'required|integer',
         'duracion' => 'required|integer',
         'dia' => 'required|date',
+        'poster' => 'required|file|image'
       ];
 
       $mensajes = [
@@ -74,10 +69,14 @@ class PeliculasController extends Controller
         'numeric' => 'El campo :attribute debe ser de tipo  numerico',
         'integer' => 'El campo :attribute debe ser un numero entero',
         'date' => 'El campo :attribute debe ser una fecha',
-        'max' => 'El campo :attribute debe teber como maximo el numero 10'
+        'max' => 'El campo :attribute debe teber como maximo el numero 10',
+        'image' => 'El archivo que intentas subir no es una imagen',
       ];
 
       $this->validate($form, $validaciones, $mensajes);
+
+      $ruta = $form->file('poster')->store('public');
+      $imagen = basename($ruta);
 
       $nuevaPelicula = new Pelicula();
 
@@ -86,6 +85,7 @@ class PeliculasController extends Controller
       $nuevaPelicula->awards = $form["premios"];
       $nuevaPelicula->length = $form["duracion"];
       $nuevaPelicula->release_date = $form["dia"];
+      $nuevaPelicula->poster = $imagen;
 
       $nuevaPelicula->save();
       // INSERT INTO movies VALUES(....)

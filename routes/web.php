@@ -15,8 +15,6 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/peliculas/{id}', 'PeliculasController@buscarPeliculasId');
-
 Route::get('/peliculas', 'PeliculasController@listado');
 
 Route::get('/lasMejores', 'PeliculasController@lasMejores');
@@ -24,6 +22,8 @@ Route::get('/lasMejores', 'PeliculasController@lasMejores');
 // Route::get('/agregarPelicula', function(){
 //   return view('agregarPelicula');
 // });
+
+Route::get('/detallePelicula/{id}', 'PeliculasController@detalle');
 
 Route::get('/agregarPelicula', 'PeliculasController@formulario');
 
